@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 
 # Task
-# So, usualy when you do an operation with a non-stationary vehicle ( like UAV,
+# Usually when you do an operation with a non-stationary vehicle ( like UAV,
 # copter ) like following, or idling near an sensor observed object to avoid
-# and prohibit any oscilation of the vehicle due to false-positive detection,
+# and prohibit any oscillation of the vehicle due to false-positive detection,
 # sensor noise, etc ( lot's of problem occurs when you go out from your
 # simulation, lab to the real world conditions ).
 # There are multiple solution to this problem:
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 #   of the observed object that it will gradually change the position.
 #   ~ DeadBand control - even with filtered position you might have a slight
 #   movement of the object smth like 10-12cm and if you have predefined
-#   observing distance for your vehicle exactly 1 meter, you will oscilate
+#   observing distance for your vehicle exactly 1 meter, you will oscillate
 #   around that point which may cause multiple tragic outcomes ( smth like
 #   your colleague hunting you in the desert because you destroyed the drone ).
 # We will go with the deadBand solution since it's much more simple to
