@@ -68,16 +68,15 @@ def check_reference(target, uav_odometry, reference, factor):
     projection = np.matmul(projection_matrix,
                            np.subtract(reference, uav_odometry))
     length = np.sqrt(np.dot(projection, projection))
-    print(length)
-    print(projection)
     # print(projection)
     # print(np.sqrt(np.dot(projection, projection)))
     if length < factor:
-        return np.add(np.matmul(orthogonal_projection_matrix, np.subtract(reference, uav_odometry)),
-                      uav_odometry)
+        return (np.add(np.matmul(orthogonal_projection_matrix,
+                                 np.subtract(reference, uav_odometry)),
+                       uav_odometry), np.add(projection, uav_odom))
         # return np.add(projection, uav_odometry)
     else:
-        return reference
+        return reference, np.add(projection, uav_odom)
 
 
 target = np.array([10, 10, 0])
@@ -88,7 +87,15 @@ original_reference = np.array([11, 5, 0])
 
 deadBand = 3  # [m]
 
-new_ref = check_reference(target, uav_odom, original_reference, deadBand)
+new_ref, projection = check_reference(target, uav_odom, original_reference,
+                                      deadBand)
+
+fig, ax = plt.subplots()
+
+circle = plt.Circle((uav_odom[0], uav_odom[1]), deadBand, color='r',
+                    fill=False)
+ax.set_aspect(1)
+ax.add_artist(circle)
 
 plt.plot(target[0], target[1], 'ro', label='target')
 # plot the uav blue
@@ -100,6 +107,7 @@ plt.plot(original_reference[0], original_reference[1], 'bx',
 
 # plot the new reference
 plt.plot(new_ref[0], new_ref[1], 'go', label='new reference')
+plt.plot(projection[0], projection[1], 'yo', label='projection')
 plt.legend(loc="upper left")
 plt.axis('equal')
 plt.show()
