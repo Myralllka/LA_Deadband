@@ -43,33 +43,53 @@ import matplotlib.pyplot as plt
 #   move it in it's plane.
 
 def check_reference(target, uav_odometry, reference, factor):
+    """
+    Function check_reference. The intention is to check whether  the input
+    reference is in or out from our deadband factor.
+  For this, you need to project the reference into the subspace between
+  target  and drone. The norm of this projection will be our deadBand factor.
+  This factor will decide if we are changing the reference or not. (is it in
+  deadBand region or not )
+
+  If we decide to move the reference, hence the factor is lower then the
+  threshold, you should create a orthogonal complement to the line which is
+  the plane through the drone, perpendicular to the line
+  This part may get quite tricky, but the main difference here that the
+  projector for this plane is the same as previous, but substitute from the
+  identity matrix The new reference is obtained as previous projection,
+  but using the new projector + cmd_odom
+    """
     subspace = np.subtract(target, uav_odometry)
     projection_matrix = np.true_divide(np.outer(subspace, subspace),
                                        np.dot(subspace, subspace))
-    res = np.matmul(projection_matrix, np.subtract(reference,
-                                                   uav_odometry))
-    res = np.add(res, uav_odometry)
-    # if we wont to update on target
-    reference = target if (np.dot(reference, res) > factor) else reference
-    # or update to a projection
-    # reference = res if (np.dot(reference, res) > factor) else reference
-    return reference  # return the updated or not updated reference
+    orthogonal_projection_matrix = np.subtract(np.identity(2),
+                                               projection_matrix)
+    # orthogonal_projection_matrix = np.subtract(projection_matrix, np.identity(2))
+    projection = np.matmul(projection_matrix,
+                           np.subtract(reference, uav_odometry))
+    length = np.sqrt(np.dot(projection, projection))
+    print(length)
+    print(projection)
+    # print(projection)
+    # print(np.sqrt(np.dot(projection, projection)))
+    if length < factor:
+        return np.add(np.matmul(orthogonal_projection_matrix, np.subtract(reference, uav_odometry)),
+                      uav_odometry)
+        # return np.add(projection, uav_odometry)
+    else:
+        return reference
 
 
-target = np.array([10, 10, 0])
+target = np.array([10, 10])
 
-uav_odom = np.array([5, 1, 0])
+uav_odom = np.array([7, 4.2])
 
-original_reference = np.array([12, 7, 0])
+original_reference = np.array([11, 5])
 
-deadBand = 1  # [m]
+deadBand = 3  # [m]
 
 new_ref = check_reference(target, uav_odom, original_reference, deadBand)
-# plt.xticks(np.arange(0, 2, step=0.2))
-# plt.yticks(np.arange(0, 2, step=0.2))yscale(
-# plt.yscale('linear')
-# plt.xscale('linear')
-# plot the target red
+
 plt.plot(target[0], target[1], 'ro', label='target')
 # plot the uav blue
 plt.plot(uav_odom[0], uav_odom[1], 'bo', label='uav odom')
