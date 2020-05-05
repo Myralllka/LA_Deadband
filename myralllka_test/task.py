@@ -62,7 +62,7 @@ def check_reference(target, uav_odometry, reference, factor):
     subspace = np.subtract(target, uav_odometry)
     projection_matrix = np.true_divide(np.outer(subspace, subspace),
                                        np.dot(subspace, subspace))
-    orthogonal_projection_matrix = np.subtract(np.identity(2),
+    orthogonal_projection_matrix = np.subtract(np.identity(3),
                                                projection_matrix)
     # orthogonal_projection_matrix = np.subtract(projection_matrix, np.identity(2))
     projection = np.matmul(projection_matrix,
@@ -80,11 +80,11 @@ def check_reference(target, uav_odometry, reference, factor):
         return reference
 
 
-target = np.array([10, 10])
+target = np.array([10, 10, 0])
 
-uav_odom = np.array([7, 4.2])
+uav_odom = np.array([7, 4.2, 0])
 
-original_reference = np.array([11, 5])
+original_reference = np.array([11, 5, 0])
 
 deadBand = 3  # [m]
 
