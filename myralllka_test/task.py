@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 
 # Task
@@ -67,7 +68,8 @@ def check_reference(target, uav_odometry, reference, factor):
     # orthogonal_projection_matrix = np.subtract(projection_matrix, np.identity(2))
     projection = np.matmul(projection_matrix,
                            np.subtract(reference, uav_odometry))
-    length = np.sqrt(np.dot(projection, projection))
+    length = np.sqrt(np.dot(np.subtract(uav_odom, reference), np.subtract(uav_odom, reference)))
+    print(length)
     # print(projection)
     # print(np.sqrt(np.dot(projection, projection)))
     if length < factor:
@@ -80,34 +82,48 @@ def check_reference(target, uav_odometry, reference, factor):
 
 
 target = np.array([10, 10, 0])
+original_reference = np.array([11, 8, 0])
+uav_odom = np.array([10, 1, 0])
+deadBand = 2.2  # [m]
+N = 6
+DELAY = 0.7
+for i in range(N):
+    noise = np.random.normal(0, 1, 100)
 
-uav_odom = np.array([7, 4.2, 0])
+    uav_odom = np.add(uav_odom, np.array([0, 1, 0]))
 
-original_reference = np.array([11, 5, 0])
+    new_ref, projection = check_reference(target, uav_odom, original_reference,
+                                          deadBand)
 
-deadBand = 3  # [m]
+    # react = patches.Rectangle((uav_odom[0] - deadBand, uav_odom[1] - deadBand),
+    #                           deadBand * 2, deadBand * 2, edgecolor='r',
+    #                           fill=False)
+    circle = plt.Circle((uav_odom[0], uav_odom[1]), deadBand, color='r',
+                        fill=False)
+    fig, ax = plt.subplots()
+    ax.set_aspect(1)
+    # ax.add_artist(react)
+    ax.add_artist(circle)
+    # plot the uav blue
+    plt.plot(uav_odom[0], uav_odom[1], 'bo', label='uav odom')
+    plt.plot(target[0], target[1], 'ro', label='target')
+    # plot the old reference
+    plt.plot(original_reference[0], original_reference[1], 'bx',
+             label='original reference')
 
-new_ref, projection = check_reference(target, uav_odom, original_reference,
-                                      deadBand)
+    # plot the new reference
+    plt.plot(new_ref[0], new_ref[1], 'go', label='new reference')
+    plt.plot(projection[0], projection[1], 'yo', label='projection')
 
-fig, ax = plt.subplots()
-
-circle = plt.Circle((uav_odom[0], uav_odom[1]), deadBand, color='r',
-                    fill=False)
-ax.set_aspect(1)
-ax.add_artist(circle)
-
-plt.plot(target[0], target[1], 'ro', label='target')
-# plot the uav blue
-plt.plot(uav_odom[0], uav_odom[1], 'bo', label='uav odom')
-
-# plot the old reference
-plt.plot(original_reference[0], original_reference[1], 'bx',
-         label='original reference')
-
-# plot the new reference
-plt.plot(new_ref[0], new_ref[1], 'go', label='new reference')
-plt.plot(projection[0], projection[1], 'yo', label='projection')
-plt.legend(loc="upper left")
-plt.axis('equal')
-plt.show()
+    plt.legend(loc="upper left")
+    plt.axis('equal')
+    plt.draw()
+    plt.pause(DELAY)
+    if i == N - 1:
+        try:
+            while True:
+                pass
+        except KeyboardInterrupt:
+            break
+    plt.close()
+print("done")
