@@ -86,9 +86,9 @@ def check_reference(target, uav_odometry, reference, factor):
 target = np.array([10, 10, 0])
 original_reference = np.array([10.5, 7.6, 0])
 uav_odom = np.array([10, 1, 0])
-deadBand = 1  # [m]
-N = 150
-DELAY = 0.2
+deadBand = 4  # [m]
+N = 15
+DELAY = 2
 flag = True
 for i in range(N):
     noisex = random.choice(np.random.normal(0, 1, 100))/10
