@@ -76,7 +76,7 @@ def check_reference(target, uav_odometry, reference, factor):
     # print(np.sqrt(np.dot(projection, projection)))
     if length < factor:
         return (np.add(np.matmul(orthogonal_projection_matrix,
-                                 np.subtract(reference, uav_odometry)),
+                                 np.subtract(reference, uav_odom)),
                        uav_odometry), np.add(projection, uav_odom))
         # return np.add(projection, uav_odometry)
     else:
