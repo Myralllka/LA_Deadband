@@ -1,3 +1,0 @@
-/home/myralllka/Documents/LA_deadband_drones/cppproject/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/myralllka/Documents/LA_deadband_drones/cppproject/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/myralllka/Documents/LA_deadband_drones/cppproject/cmake-build-debug/CMakeFiles/cppproject.dir
