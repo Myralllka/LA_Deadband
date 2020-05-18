@@ -8,8 +8,8 @@ Eigen::Vector3d check_reference(Eigen::Vector3d target, Eigen::Vector3d referenc
     auto projection_matrix = (subspace * subspace.transpose()) / subspace.dot(subspace);
     auto orthogonal_projection_matrix = Eigen::MatrixXd::Identity(3, 3) - projection_matrix;
     auto projection = projection_matrix * (uav_odom - reference);
-    auto length = std::sqrt((uav_odom - reference).dot(uav_odom - reference));
-    if (length < FACTOR) {
+    auto length = std::sqrt((projection).dot(projection));
+    if (length. < FACTOR) {
         return (orthogonal_projection_matrix * (reference - uav_odom)) + uav_odom;
     } else return reference;
 }

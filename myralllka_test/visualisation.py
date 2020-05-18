@@ -66,14 +66,9 @@ def check_reference(target, uav_odometry, reference, factor):
                                        np.dot(subspace, subspace))
     orthogonal_projection_matrix = np.subtract(np.identity(3),
                                                projection_matrix)
-    # orthogonal_projection_matrix = np.subtract(projection_matrix, np.identity(2))
     projection = np.matmul(projection_matrix,
                            np.subtract(reference, uav_odometry))
-    length = np.sqrt(np.dot(np.subtract(uav_odom, reference),
-                            np.subtract(uav_odom, reference)))
-    print(length)
-    # print(projection)
-    # print(np.sqrt(np.dot(projection, projection)))
+    length = np.sqrt(np.dot(projection, projection))
     if length < factor:
         return (np.add(np.matmul(orthogonal_projection_matrix,
                                  np.subtract(reference, uav_odom)),
@@ -91,8 +86,8 @@ N = 15
 DELAY = 2
 flag = True
 for i in range(N):
-    noisex = random.choice(np.random.normal(0, 1, 100))/10
-    noisey = random.choice(np.random.normal(0, 1, 100))/10
+    noisex = random.choice(np.random.normal(0, 1, 100)) / 10
+    noisey = random.choice(np.random.normal(0, 1, 100)) / 10
     new_ref, projection = check_reference(target, uav_odom,
                                           original_reference,
                                           deadBand)
