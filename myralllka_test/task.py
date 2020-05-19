@@ -69,8 +69,7 @@ def check_reference(target, uav_odometry, reference, factor):
     # orthogonal_projection_matrix = np.subtract(projection_matrix, np.identity(2))
     projection = np.matmul(projection_matrix,
                            np.subtract(reference, uav_odometry))
-    length = np.sqrt(np.dot(np.subtract(uav_odom, reference),
-                            np.subtract(uav_odom, reference)))
+    length = np.sqrt(np.dot(projection, projection))
     # print(length)
     # print(projection)
     # print(np.sqrt(np.dot(projection, projection)))
